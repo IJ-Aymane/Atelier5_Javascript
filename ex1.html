@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Utilisateur</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .profile { border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; max-width: 400px; }
+        .profile img { width: 100px; border-radius: 50%; }
+        table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+    </style>
+</head>
+<body>
+
+<h1>Profil Utilisateur</h1>
+<div class="profile" id="profile"></div>
+
+<h2>Données Utilisateur</h2>
+<table id="userTable">
+    <thead>
+    <tr>
+        <th>Nom</th><th>Email</th><th>Login</th><th>Adresse</th><th>Sexe</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>Commandes</h2>
+<ul id="ordersList"></ul>
+
+<script>
+    const userData = {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        avatar: 'https://via.placeholder.com/100',
+        gender: 'M',
+        login: 'johndoe',
+        password: '123456',
+        address: '123 rue de Paris'
+    };
+
+    function getUserData() {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(userData), 2000);
+        });
+    }
+
+    function getUserOrders() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve([
+                    "Commande #1001",
+                    "Commande #1002",
+                    "Commande #1003"
+                ]);
+            }, 1500);
+        });
+    }
+
+    async function displayUser() {
+        const user = await getUserData();
+
+        // Affichage du profil
+        document.getElementById("profile").innerHTML = `
+      <img src="${user.avatar}" alt="avatar"><br>
+      <strong>Nom:</strong> ${user.name}<br>
+      <strong>Email:</strong> ${user.email}<br>
+      <strong>Sexe:</strong> ${user.gender}
+    `;
+
+        const row = `
+      <tr>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.login}</td>
+        <td>${user.address}</td>
+        <td>${user.gender}</td>
+      </tr>
+    `;
+        document.querySelector("#userTable tbody").innerHTML = row;
+
+        // Chainer : récupérer les commandes
+        const orders = await getUserOrders();
+        const ordersList = document.getElementById("ordersList");
+        orders.forEach(order => {
+            const li = document.createElement("li");
+            li.textContent = order;
+            ordersList.appendChild(li);
+        });
+    }
+
+    displayUser();
+</script>
+
+</body>
+</html>

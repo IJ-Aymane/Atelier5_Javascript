@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload et Liste de Fichiers</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 10px 0; }
+    </style>
+</head>
+<body>
+<h1>Uploader un fichier</h1>
+<input type="file" id="fileInput">
+<button onclick="uploadFile()">Uploader</button>
+
+<h2>Fichiers disponibles</h2>
+<ul id="fileList"></ul>
+
+<script>
+    async function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files.length) return alert("Veuillez choisir un fichier.");
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch("exe2.php?action=upload", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            getFiles();
+        } catch (error) {
+            console.error("Erreur upload :", error);
+        }
+    }
+
+    async function getFiles() {
+        try {
+            const response = await fetch("ex2.php?action=list");
+            const files = await response.json();
+            const list = document.getElementById("fileList");
+            list.innerHTML = "";
+            files.forEach(file => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a href="uploads/${file}" target="_blank">${file}</a>`;
+                list.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Erreur chargement fichiers :", error);
+        }
+    }
+
+    // Charger la liste au début
+    window.onload = getFiles;
+</script>
+</body>
+</html>
